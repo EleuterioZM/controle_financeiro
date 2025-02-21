@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .resultado {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .alerta {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .extrato {
+            margin-top: 20px;
+        }
+        .extrato h2 {
+            color: #4CAF50;
+        }
+        .extrato p {
+            margin: 5px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Controle Financeiro Pessoal</h1>
+    <form action="/" method="post">
+        <label for="periodo">Período:</label>
+        <select id="periodo" name="periodo" required>
+            <option value="semanal">Semanal</option>
+            <option value="mensal">Mensal</option>
+            <option value="anual">Anual</option>
+        </select>
+
+        <label for="renda">Renda (R$):</label>
+        <input type="number" id="renda" name="renda" step="0.01" required>
+
+        <label for="data">Data do Gasto:</label>
+        <input type="date" id="data" name="data" required>
+
+        <label for="valor">Valor do Gasto (R$):</label>
+        <input type="number" id="valor" name="valor" step="0.01" required>
+
+        <label for="categoria">Categoria:</label>
+        <select id="categoria" name="categoria" required>
+            <option value="Alimentação">Alimentação</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Lazer">Lazer</option>
+            <option value="Moradia">Moradia</option>
+            <option value="Outros">Outros</option>
+        </select>
+
+        <button type="submit">Adicionar Gasto</button>
+    </form>
+
+    {% if saldo is not none %}
+    <div class="resultado">
+        <h2>Resultados</h2>
+        <p><strong>Total Gastos:</strong> R$ {{ "%.2f"|format(total_gastos) }}</p>
+        <p><strong>Saldo Disponível:</strong> R$ {{ "%.2f"|format(saldo) }}</p>
+        {% if alerta %}
+        <p class="alerta">{{ alerta }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if extrato %}
+    <div class="extrato">
+        <h2>Extrato do Período ({{ extrato.periodo }})</h2>
+        <p><strong>Renda:</strong> R$ {{ "%.2f"|format(extrato.renda) }}</p>
+        <p><strong>Total Gastos:</strong> R$ {{ "%.2f"|format(extrato.total_gastos) }}</p>
+        <p><strong>Saldo:</strong> R$ {{ "%.2f"|format(extrato.saldo) }}</p>
+        <h3>Gastos por Categoria</h3>
+        <ul>
+            {% for categoria, valor in extrato.gastos_por_categoria.items() %}
+            <li><strong>{{ categoria }}:</strong> R$ {{ "%.2f"|format(valor) }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <h2>Gráfico de Gastos por Categoria</h2>
+    <img src="{{ url_for('static', filename='gastos.png') }}" alt="Gastos por Categoria">
+</body>
+</html>
